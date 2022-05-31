@@ -426,7 +426,7 @@ class Finder(object):
             m = p.search(self._handlerPayload_Byte)          # send로 넘어오는 payload에 대해 검색함
             if m and search_item!=b'.*':
                 # Post Message to JS
-                self.post_js(m)
+                #self.post_js(m)
                 # Print Logs
                 if opt_printConsole: self.print_log(count)
             # Record Log
