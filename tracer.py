@@ -266,7 +266,7 @@ class TracerProfileBuilder(object):
                     # hook_count는 2000을 넘기지 않음
                     for l in range(start_index,start_index + hook_count): 
                         # 후킹 데이터가 2000개가 넘을 경우 break
-                        if(l - start_addr > 2000):break
+                        if(l - start_index > 2000):break
                         # 후킹 데이터 생성 후 -a 옵션의 파라미터로 보냄
                         #try: print(str(l)+"  "+data['Module']+"!"+data[key][l]['Address'])
                         try: 
