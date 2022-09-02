@@ -804,18 +804,23 @@ class Repository(object):
             //var argStr=String(Memory.readUtf16String(args[i])); 
             //var argStr=String(Memory.readAnsiString(args[i])); 
             var argStr=String(Memory.readCString(args[i])); 
-            if(argStr==null || argStr=="" || argStr=="null" || argStr.trim().length < 1 || argStr.trim().length > 3000){continue; }
-            arg_len = Number('0x'+argStr.length.toString(16)); 
-            strHex = "%(module_name)s#%(display_name)s#["+i+"]#"+hexConvert(args[i],arg_len); 
+            if(argStr==null || argStr=="" || argStr=="null" || argStr.trim().length < 1){ continue; }// || argStr.trim().length > 3000){continue; }
+            else{
+                arg_len = Number('0x'+argStr.length.toString(16)); 
+                strHex = "%(module_name)s#%(display_name)s#["+i+"]#"+hexConvert(args[i],arg_len); 
+            }
         }catch(err){
             var argStr = parseInt(args[i]); 
             if(argStr==null || argStr=="" || argStr=="null" || argStr.length < 1 ){continue; }
-            strHex = "%(module_name)s#%(display_name)s#["+i+"]#"+argStr; 
+            else{ strHex = "%(module_name)s#%(display_name)s#["+i+"]#"+argStr; }
+            
         }
 
         try{       
-            send_payload = {'type':'js:send','jspayload' : strHex}
-            send(send_payload);                                                              // send "js:send" and string type hex payload to python
+            if(strHex){
+                send_payload = {'type':'js:send','jspayload' : strHex}
+                send(send_payload);                                                          // send "js:send" and string type hex payload to python    
+            }
             //Thread.sleep(0.006);                                                           // wait for recv
             //var op = recv('findStr',function(value) { return payload = value.payload });   // recv payload from python
             
@@ -847,21 +852,25 @@ class Repository(object):
   onLeave(log, retval, state) {
     function hexConvert(addr,size){var hexResult = ""; var buf = Memory.readByteArray(addr,size);var hexArray = new Uint8Array(buf);for(var i = 0; i < hexArray.length; i++){if(hexArray[i].toString(16).length%%2==1){hexResult += ("0"+hexArray[i].toString(16) + " "); }else{hexResult += (hexArray[i].toString(16) + " "); } }return hexResult.trim();}
     try{
-        //var argStr=String(Memory.readUtf16String(retval)); 
-        //var argStr=String(Memory.readAnsiString(retval)); 
-        var argStr=String(Memory.readCString(retval)); 
-        if(argStr==null || argStr=="" || argStr=="null" || argStr.trim().length < 1 || argStr.trim().length > 3000){ }
-        arg_len = Number('0x'+argStr.length.toString(16)); 
-        strHex = "%(module_name)s#%(display_name)s#retval#"+hexConvert(retval,arg_len);
+        //var argStr=String(Memory.readUtf16String(retval));
+        //var argStr=String(Memory.readAnsiString(retval));
+        var argStr=String(Memory.readCString(retval));
+        if(argStr==null || argStr=="" || argStr=="null" || argStr.trim().length < 1){ }// || argStr.trim().length > 3000){ }
+        else{
+            arg_len = Number('0x'+argStr.length.toString(16));
+            strHex = "%(module_name)s#%(display_name)s#retval#"+hexConvert(retval,arg_len);
+        }
     }catch(err){
-        var argStr = parseInt(retval); 
+        var argStr = parseInt(retval);
         if(argStr==null || argStr=="" || argStr=="null" || argStr.length < 1 ){ }
-        strHex = "%(module_name)s#%(display_name)s#retval#"+argStr; 
+        else{ strHex = "%(module_name)s#%(display_name)s#retval#"+argStr; }
     }
 
     try{
-        send_payload = {'type':'js:send','jspayload' : strHex}
-        send(send_payload);                                                              // send "js:send" and string type hex payload to python
+        if(strHex){
+            send_payload = {'type':'js:send','jspayload' : strHex}
+            send(send_payload);                                                          // send "js:send" and string type hex payload to python
+        }
         //Thread.sleep(0.006);                                                           // wait for recv
         //var op = recv('findStr',function(value) { return payload = value.payload });   // recv payload from python
         
